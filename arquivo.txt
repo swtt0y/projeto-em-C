@@ -1,0 +1,6 @@
+______________lista de cadastros realizados______________
+
+usuario 0
+nome:este
+CPF:22222222
+senha:1221

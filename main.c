@@ -14,7 +14,8 @@ typedef struct {
 usuario user[tam]={0};
 usuario *pont = user;
 
-void inicio(int entrada){
+int inicio(){
+    int entrada;
     puts("//////////////////////////\n");
     puts("sistema de cadastro e busca\n");
     puts("//////////////////////////\n");
@@ -23,9 +24,10 @@ void inicio(int entrada){
     puts("1. admistrador");
     puts("2. usuario");
     scanf("%d", &entrada);
+    return entrada;
 }
 
-void define_adm(){
+int define_adm(){
     int id, senha;
     puts("percebemos que ainda não possue o login de administrador.");
     puts("defina os campos");
@@ -33,7 +35,9 @@ void define_adm(){
     scanf("%d", &id);
     printf("senha: ");
     scanf("%d", &senha);
+    return id, senha;
 }
+
 int verifica(){
     char num_cpf[12];
     puts("digite seu cpf para que verifique no sistema: ");
@@ -73,6 +77,22 @@ int main(){
     usuario user0[tam]={0};
     usuario *pont0 = user0;
     int i=0, j, entrada0;
+    FILE *fp;
+
+    char len;
+    fp=fopen("arquivo.txt", "r");
+    if(fp==NULL){
+        puts("erro ao abrir o arquivo.");
+        exit(1);
+    }
+    if(inicio()==1){
+        while ((len=fgetc(fp))!=EOF){
+            if(len==' '){
+                define_adm();
+            }
+        }
+    }
+
     int retorno = verifica();
     if(retorno==1){
       printf("cadastro pendente! aguarde!\n");
@@ -80,21 +100,8 @@ int main(){
       i++;
     }
     j=i-1;
-    FILE *fp;
-    char len;
-    fp=fopen("arquivo.txt", "w");
-    if(fp==NULL){
-        puts("erro ao abrir o arquivo.");
-        exit(1);
-    }
-    inicio(entrada0);
-    if(entrada0==1){
-        while ((len=fgetc(fp))!=EOF){
-            if(len=' '){
-                define_adm();
-            }
-        }
-    }
+
+
     fprintf(fp,"______________lista de cadastros realizados______________\n");
     if(i>0){
       fprintf(fp,"\nusuario %d\nnome:%s\nCPF:%s\nsenha:%s", j, pont0->nome, pont0->cpf, pont0->senha);
