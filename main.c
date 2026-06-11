@@ -5,7 +5,7 @@
 #define tam 10
 
 typedef struct {
-    char nome[10];
+    char nome[25];
     char cpf[12];
     char senha[12];
 
@@ -20,6 +20,15 @@ void inicio(){
     puts("1. admistrador");
     puts("2. usuario");
     puts("aperta 0 para parar o programa");
+}
+
+void menu_adm(){
+    puts("o que deseja fazer como adm?");
+    puts("1. mudar cadastro de algum usuario");
+    puts("2. mudar cadastro de adm");
+    puts("3. sair do modo adm");
+    puts("4. adicionar cadastro")
+    puts("5. sair do sistema");
 }
 
 int verifica(char cpfs[tam][12]){
@@ -50,8 +59,9 @@ usuario dados() {
 }
 
 void login_admistrador(usuario adm){
-    char nome[10];
+    char nome[25];
     char senha[12];
+    int escolha;
     puts("\nfaça o login exclusivo do administrador");
     printf("nome: ");
     scanf("%s", &nome);
@@ -68,7 +78,37 @@ void login_admistrador(usuario adm){
     else {
         puts("Login ou senha incorreto(s)");
     }
-    // CONTINUAR...
+    while(1){
+        menu_adm();
+        scanf("%d", &escolha);
+        switch(escolha){
+        case 1:
+             alterar_cad();
+        }
+    }
+
+}
+
+void alterar_cad(){
+    int escolha;
+    if(verifica()==0){
+        while(1){
+            puts("qual campo deseja alterar no cadastro?");
+            puts("1. nome");
+            puts("2. CPF");
+            puts("3. senha");
+            puts("4. todos");
+            scanf("%d", &escolha);
+            switch(escolha){
+            case 1:
+                printf("novo nome: ");
+
+            }
+        }
+    }
+    else{
+        puts("cfp não encontrado no sistema");
+    }
 }
 
 usuario define_adm(){
