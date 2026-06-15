@@ -1,12 +1,10 @@
-______________lista de cadastros realizados______________
 
-usuario 0
-nome: 42019863
-CPF: 415200
-senha: 45512365
-
-usuario 1
+usuario 
 nome: mariana
-CPF: 08484267113
-senha: eulindaqcuec 
-1
+CPF: 075264112
+senha: eulindadecueca
+
+usuario 
+nome: masmd
+CPF: sdcvd
+senha: fddfsfd

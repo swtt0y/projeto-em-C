@@ -2,14 +2,70 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
-#define tam 10
 
 typedef struct {
+    char nome[10];
+    char senha[12];
+}adm;
+adm Adm;
+
+typedef struct usuario{
     char nome[25];
     char cpf[12];
     char senha[12];
+    struct usuario *pont;
 
 }usuario;
+
+usuario* lista_usuarios (){
+    usuario *lu;
+    lu = (usuario*) malloc (sizeof(usuario));
+    if(lu != NULL){
+      lu->pont=NULL; //*lu = NULL n funciona
+    }
+    return lu;
+}
+
+void carregar(usuario *usuarios){
+    FILE *fp;
+    fp = fopen("arquivo.txt", "r");
+    char palavra[25];
+    usuario *novo = NULL;
+     if(fp == NULL){
+        return;
+     }
+     while (fscanf(fp, "%s", palavra) != EOF) {
+        if (strcmp(palavra, "nome:") == 0) {
+            novo = (usuario*) malloc(sizeof(usuario));
+            fscanf(fp, "%s", novo->nome);
+        }
+        else if(strcmp(palavra, "CPF:")==0){
+            fscanf(fp, "%s", novo->cpf);
+        }
+        else if(strcmp(palavra, "senha:")==0){
+            fscanf(fp, "%s", novo->senha);
+            novo->pont = usuarios->pont;
+            usuarios->pont = novo;
+        }
+    }
+    fclose(fp);
+}
+
+void salva(usuario *usuarios){
+    FILE *fp;
+    fp=fopen("arquivo.txt", "w");
+    if(fp==NULL){
+        puts("erro ao abrir o arquivo");
+        exit(1);
+    }
+    usuario *no;
+    no = usuarios->pont;
+    while(no!=NULL){
+        fprintf(fp, "\nusuario \nnome: %s\nCPF: %s\nsenha: %s\n", no->nome, no->cpf, no->senha);
+        no = no->pont;
+    }
+    fclose(fp);
+}
 
 void inicio(){
     puts("//////////////////////////\n");
@@ -31,84 +87,94 @@ void menu_adm(){
     puts("5. sair do sistema");
 }
 
-int verifica(usuario *usuario_novo){
-    char cpf;
-    puts("digite seu cpf para que verifique no sistema: ");
-    scanf("%s", &cpf);
-    for (int i = 0; i < tam; i++){
-        if (strcmp(cpf, usuario_novo->cpf) == 0){
+usuario* verifica(usuario *usuarios){
+    usuario *no;
+    no = usuarios->pont;
+    char cpf[12];
+    printf("digite seu cpf para que verifique no sistema: ");
+    scanf("%s", cpf);
+    while(no != NULL){
+        if (strcmp(cpf, no->cpf) == 0){
             printf("cadastro já está no sistema!");
-            return 0;
+            return no;
         }
+        no = no->pont;
     }
-    return 1;
+    return NULL;
 }
 
-usuario dados(usuario *usuario_novo) {
+void dados(usuario *usuarios) {
+    usuario *novo;
+    novo = (usuario*) malloc(sizeof(usuario));
     printf("defina seu cadastro\n");
     printf("qual o seu nome?");
-    scanf("%s", usuario_novo->nome);
+    scanf("%s", novo->nome);
     printf("qual o seu cpf? ");
-    scanf("%s", usuario_novo->cpf);
-    printf("qual será a sua senha? ");
-    scanf("%s", usuario_novo->senha);
-    getchar();
+    scanf("%s", novo->cpf);
+    printf("qual será a sua senha?");
+    scanf("%s", novo->senha);
     puts("cadastro realizado com sucesso!");
+    novo->pont = usuarios->pont;
+    usuarios->pont = novo;
+    salva(usuarios);
 }
 
-void alterar_cad(usuario *usuario_novo, char cpfs[tam][12]){
+void alterar_cad(usuario *usuarios){
+    usuario *no = verifica(usuarios);
+    if(no == NULL){
+        puts("cpf não encontrado");
+        return;
+    }
     int escolha;
-    if(verifica(cpfs)==0){
-        while(1){
-            puts("qual campo deseja alterar no cadastro?");
-            puts("1. nome");
-            puts("2. CPF");
-            puts("3. senha");
-            puts("4. todos");
-            scanf("%d", &escolha);
-            switch(escolha){
+    while(1){
+        puts("qual campo deseja alterar no cadastro?");
+        puts("1. nome");
+        puts("2. CPF");
+        puts("3. senha");
+        puts("4. todos");
+        scanf("%d", &escolha);
+         switch(escolha){
             case 1:
                 printf("novo nome: ");
-                scanf("%s", usuario_novo->nome);
+                scanf("%s", no->nome);
+                salva(usuarios);
                 puts("alteração salva com sucesso!");
                 break;
             case 2:
                 printf("novo CPF: ");
-                scanf("%s", usuario_novo->cpf);
+                scanf("%s", no->cpf);
+                salva(usuarios);
                 puts("alteração salva com sucesso!");
                 break;
             case 3:
                 printf("nova senha: ");
-                scanf("%s", usuario_novo->senha);
+                scanf("%s", no->senha);
+                salva(usuarios);
                 puts("alteração salva com sucesso!");
                 break;
             case 4:
                 printf("novo nome: ");
-                scanf("%s", usuario_novo->nome);
+                scanf("%s", no->nome);
                 printf("novo CPF: ");
-                scanf("%s", usuario_novo->cpf);
+                scanf("%s", no->cpf);
                 printf("nova senha: ");
-                scanf("%s", usuario_novo->senha);
+                scanf("%s", no->senha);
+                salva(usuarios);
                 puts("alterações salvas com sucesso!");
                 break;
             default:
                 puts("opção invalida");
             }
         }
-    }
-    else{
-        puts("cfp não encontrado no sistema");
-    }
 }
 
-void login_admistrador(usuario *adm){
-    char nome[25];
+void login_admistrador(adm *adm, usuario *usuarios){
+    char nome[10];
     char senha[12];
     int escolha;
-    usuario *usuario_novo;
     puts("\nfaça o login exclusivo do administrador");
     printf("nome: ");
-    scanf("%s", &nome);
+    scanf("%s", nome);
     printf("senha: ");
     scanf("%s", senha);
     if (strcmp(adm->nome, nome) == 0) {
@@ -116,98 +182,76 @@ void login_admistrador(usuario *adm){
             puts("Login realizado com sucesso!");
         }
         else {
-            puts("Login ou senha incorreto(s)");
+            puts("senha incorreta");
         }
     }
     else {
-        puts("Login ou senha incorreto(s)");
+        puts("nome incorreto");
     }
     while(1){
         menu_adm();
         scanf("%d", &escolha);
         switch(escolha){
         case 1:
-             alterar_cad(usuario_novo, cpfs);
+             alterar_cad(usuarios);
              break;
         }
     }
 
 }
 
-
-usuario define_adm(usuario *adm){
+void define_adm (adm *adm){
     puts("percebemos que ainda não possue o login de administrador.");
     puts("defina os campos");
     printf("Nome: ");
-    scanf("%s", &adm->nome);
+    scanf("%s", adm->nome);
     printf("Senha: ");
-    scanf("%s", &adm->senha);
+    scanf("%s", adm->senha);
 }
 
 int main(){
     setlocale(LC_ALL, "Portuguese");
-    usuario *adm, *usuario_novo;
+    adm *adm = &Adm;
+    usuario *usuarios = lista_usuarios();
     int entrada;
+    carregar(usuarios);
     while(1){
         FILE *fp;
-        char len;
-        char palavra[10];
-        char cpfs[tam][12];
-        int quantidade = 0;
+        char palavra[30];
         inicio();
         scanf("%d", &entrada);
-
         if(entrada==1){
-        fp = fopen("adms.txt", "r");
+        fp = fopen("adms.txt", "r+");
         if(fp == NULL) {
             puts("erro ao abrir o arquivo.");
             exit(1);
         }
-        while ((len = fgetc(fp)) != EOF) {
-            if (len == '#') {
-                adm = define_adm();
+        fseek(fp, 0, SEEK_END);
+        long posicao = ftell(fp);
+        printf("posição: %ld\n", posicao);
+        if(posicao==0){
+            define_adm(adm);
+            fprintf(fp,"\nADMINISTRADOR\nnome: %s\nsenha: %s\n", adm->nome, adm->senha);
+            fseek(fp, 70, SEEK_END);
+            login_admistrador(adm, usuarios);
+        }
+        fseek(fp, 0, SEEK_SET);
+        while(!feof(fp)){
+            fscanf(fp, "%s", palavra);
+            if(strcmp(palavra, "nome:")==0){
+                fscanf(fp, "%s", adm->nome);
+            }
+            else if(strcmp(palavra, "senha:")==0){
+                fscanf(fp, "%s", adm->senha);
             }
         }
         fclose(fp);
-        fp = fopen("adms.txt", "w");
-        if(fp == NULL){
-            puts("erro ao abrir o arquivo.");
-            exit(1);
+        login_admistrador(adm, usuarios);
         }
-        fprintf(fp,"\nADMINISTRADOR\nnome: %s\nsenha: %s\n", adm->nome, adm->senha);
-        fclose(fp);
-
-        login_admistrador(adm);
-
-        }
-
         else if(entrada==2){
-            fp = fopen("arquivo.txt", "r");
-            if(fp == NULL){
-                puts("erro ao abrir o arquivo.");
-                exit(1);
-            }
-            while (!feof(fp)) {
-                fscanf(fp, "%s", &palavra);
-                if (strcmp(palavra, "CPF:") == 0) {
-                        quantidade++;
-                }
-            }
-            fclose(fp);
-            if (verifica(cpfs) == 1) {
+            if (verifica(usuarios) == NULL) {
                 printf("cadastro pendente! aguarde!\n");
-                usuario_novo = dados();
-                fp = fopen("arquivo.txt", "a");
-                if (fp == NULL) {
-                    puts("Impossível gravar no arquivo!");
-                    exit(1);
-                }
-                if (quantidade == 0){
-                    fprintf(fp,"______________lista de cadastros realizados______________\n");
-                }
-                fprintf(fp,"\nusuario %d\nnome: %s\nCPF: %s\nsenha: %s\n", quantidade+1, usuario_novo.nome, usuario_novo.cpf, usuario_novo.senha);
-
-                fclose(fp);
+                dados(usuarios);
             }
         }
         else if(entrada==0){
