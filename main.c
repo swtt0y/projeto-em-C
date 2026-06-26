@@ -78,7 +78,7 @@ void salva_adm(adm *adm){
     fclose(fp);
 }
 
-int inicio(){
+int menu_inicio(){
     int entrada;
     puts("//////////////////////////\n");
     puts("sistema de cadastro e busca\n");
@@ -153,7 +153,7 @@ void alterar_cad(usuario *usuarios, char cpf[12]){
         scanf("%d", &escolha);
          switch(escolha){
             case 0:
-                break;
+                return;
             case 1:
                 printf("novo nome: ");
                 scanf("%s", no->nome);
@@ -185,7 +185,6 @@ void alterar_cad(usuario *usuarios, char cpf[12]){
             default:
                 puts("opção invalida");
             }
-            break;
         }
 }
 void alterar_adm(adm *adm){
@@ -195,7 +194,7 @@ void alterar_adm(adm *adm){
         puts("1. nome");
         puts("2. senha");
         puts("3. todos");
-        puts("0. voltar para inicio");
+        puts("0. voltar");
         scanf("%d", &escolha);
         switch(escolha){
         case 0:
@@ -234,42 +233,38 @@ void login_admistrador(adm *adm, usuario *usuarios){
     scanf("%s", nome);
     printf("senha: ");
     scanf("%s", senha);
-    while(1){
-        if (strcmp(adm->nome, nome) == 0) {
-          if (strcmp(adm->senha, senha) == 0) {
-            puts("Login realizado com sucesso!");
-            menu_adm();
-            scanf("%d", &escolha);
-            switch(escolha){
-            case 1:
-               printf("digite o cpf para verificar no sistema: ");
-               scanf("%s", cpf);
-               alterar_cad(usuarios, cpf);
-               break;
-            case 2:
-               alterar_adm(adm);
-               break;
-            case 3:
-               break;
-            case 4:
-               dados(usuarios);
-               return; //volta para o inicio
-            case 5:
-               puts("desconectanto do sistema");
-               exit(1);
-               break;
+    if (strcmp(adm->nome, nome)==0){
+        if (strcmp(adm->senha, senha) == 0){
+            while(1){
+                menu_adm();
+                scanf("%d", &escolha);
+                switch(escolha){
+                case 1:
+                    printf("digite o cpf para verificar no sistema: ");
+                    scanf("%s", cpf);
+                    alterar_cad(usuarios, cpf);
+                    break;
+                case 2:
+                    alterar_adm(adm);
+                    break;
+                case 3:
+                    return;
+                case 4:
+                    dados(usuarios);
+                    break;
+                case 5:
+                    puts("desconectanto do sistema");
+                    exit(1);
+                    break;
+                }
             }
-          }
-          else {
-            puts("senha incorreta!tente novamente.");
-            return;
-          }
         }
         else {
-          puts("nome incorreto!tente novamente.");
-          return;
+            puts("senha incorreta!acesso negado.");
         }
-        break;
+    }
+    else {
+        puts("nome incorreto!acesso negado.");
     }
 }
 
@@ -320,13 +315,13 @@ void login_usuario(usuario *usuarios){
      }
 }
 
-void inicial(adm *adm, usuario *usuarios){
+void inicio(adm *adm, usuario *usuarios){
     int entrada;
     carregar(usuarios);
     while(1){
         FILE *fp;
         char palavra[30];
-        entrada=inicio();
+        entrada = menu_inicio();
         if(entrada==1){
         fp = fopen("adms.txt", "r+");
         if(fp == NULL) {
@@ -373,6 +368,6 @@ int main(){
     adm Adm;
     adm *adm = &Adm;
     usuario *usuarios = lista_usuarios();
-    inicial(adm, usuarios);
+    inicio(adm, usuarios);
     return 0;
 }
