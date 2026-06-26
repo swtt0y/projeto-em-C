@@ -20,7 +20,7 @@ usuario* lista_usuarios (){
     usuario *lu;
     lu = (usuario*) malloc (sizeof(usuario));
     if(lu != NULL){
-      lu->pont=NULL; //*lu = NULL n funciona
+      lu->pont=NULL;
     }
     return lu;
 }
@@ -135,7 +135,6 @@ void dados(usuario *usuarios) {
 }
 
 void alterar_cad(usuario *usuarios, char cpf[12]){
-    //falta o dps de adm e do usuario
     usuario *no;
     no = verifica(usuarios, cpf);
     if(no == NULL){
