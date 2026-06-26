@@ -1,12 +1,40 @@
-______________lista de cadastros realizados______________
 
-usuario 0
-nome: 42019863
-CPF: 415200
-senha: 45512365
+usuario 
+nome: angelica
+CPF: 63210
+senha: kkkk,0
 
-usuario 1
-nome: mariana
+usuario 
+nome: julia
 CPF: 08484267113
-senha: eulindaqcuec 
-1
+senha: jujusPIX0
+
+usuario 
+nome: masmd
+CPF: 0987654
+senha: fddfsfd
+
+usuario 
+nome: mariana
+CPF: 075264112
+senha: jasjapodsj
+
+usuario 
+nome: willson
+CPF: 090987123
+senha: ebaa
+
+usuario 
+nome: ronaldo
+CPF: 126304
+senha: uiuiuiu
+
+usuario 
+nome: hiago
+CPF: 7852
+senha: labubu
+
+usuario 
+nome: roberta
+CPF: 85214700
+senha: 56euetu

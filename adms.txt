@@ -1,4 +1,4 @@
 
 ADMINISTRADOR
-nome: adm1223
-senha: 120334
+nome: adm
+senha: 170700
